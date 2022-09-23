@@ -1,0 +1,5 @@
+DROP TABLE carers;
+CREATE TABLE carers (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(255) NOT NULL
+)
