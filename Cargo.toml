@@ -8,6 +8,7 @@ edition = "2021"
 [dependencies]
 chrono = "0.4.22"
 diesel = { version = "2.0.0", features = ["postgres"] }
+diesel_migrations = { version = "2.0.0", features = ["postgres"] }
 dotenvy = "0.15"
 async-graphql = "4.0.13"
 async-graphql-axum = "4.0.13"

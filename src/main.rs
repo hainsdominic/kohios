@@ -6,7 +6,18 @@ use axum::{
     routing::get,
     Router, Server,
 };
-use kohios::models::{KohiosSchema, MutationRoot, QueryRoot};
+use diesel::PgConnection;
+use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};
+use kohios::{
+    db::establish_connection,
+    models::{KohiosSchema, MutationRoot, QueryRoot},
+};
+
+pub const MIGRATIONS: EmbeddedMigrations = embed_migrations!();
+
+fn run_migration(conn: &mut PgConnection) {
+    conn.run_pending_migrations(MIGRATIONS).unwrap();
+}
 
 async fn graphql_handler(schema: Extension<KohiosSchema>, req: GraphQLRequest) -> GraphQLResponse {
     schema.execute(req.into_inner()).await.into()
@@ -22,7 +33,15 @@ async fn graphiql() -> impl IntoResponse {
 
 #[tokio::main]
 async fn main() {
-    let schema = Schema::build(QueryRoot, MutationRoot, EmptySubscription).finish();
+    let mut connection = establish_connection();
+    run_migration(&mut connection);
+
+    let schema = Schema::build(
+        QueryRoot::default(),
+        MutationRoot::default(),
+        EmptySubscription,
+    )
+    .finish();
 
     let app = Router::new()
         .route("/", get(graphiql).post(graphql_handler))
