@@ -14,6 +14,17 @@ pub struct NewCarer<'a> {
     pub name: &'a str,
 }
 
-pub struct DeleteCarer {
+#[derive(InputObject)]
+pub struct FindCarerInput {
+    pub id: i32,
+}
+
+#[derive(InputObject)]
+pub struct CreateCarerInput {
+    pub name: String,
+}
+
+#[derive(InputObject)]
+pub struct DeleteCarerInput {
     pub id: i32,
 }
